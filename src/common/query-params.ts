@@ -9,7 +9,7 @@ export enum Order {
 
 export interface PageMetaDtoParameters {
   pageOptionsDto: PageOptionsDto;
-  itemCount: number;
+  total: number;
 }
 
 export class PageOptionsDto {
@@ -53,7 +53,7 @@ export class PageMetaDto {
   readonly take: number;
 
   @ApiProperty()
-  readonly itemCount: number;
+  readonly total: number;
 
   @ApiProperty()
   readonly pageCount: number;
@@ -64,11 +64,11 @@ export class PageMetaDto {
   @ApiProperty()
   readonly hasNextPage: boolean;
 
-  constructor({ pageOptionsDto, itemCount }: PageMetaDtoParameters) {
+  constructor({ pageOptionsDto, total }: PageMetaDtoParameters) {
     this.page = pageOptionsDto.page;
     this.take = pageOptionsDto.take;
-    this.itemCount = itemCount;
-    this.pageCount = Math.ceil(this.itemCount / this.take);
+    this.total = total;
+    this.pageCount = Math.ceil(this.total / this.take);
     this.hasPreviousPage = this.page > 1;
     this.hasNextPage = this.page < this.pageCount;
   }
@@ -86,4 +86,11 @@ export class PageDto<T> {
     this.data = data;
     this.meta = meta;
   }
+}
+
+export class SuccessEntity {
+  @ApiProperty()
+  success: Boolean
+  @ApiProperty()
+  message: string
 }

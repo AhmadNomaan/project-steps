@@ -8,19 +8,23 @@ datasource db {
 }
 
 model feature_request {
-  id               String   @id(map: "feature_request_pk") @db.Uuid
-  title            String   @db.VarChar
-  description      String
-  attachment_count Int?
-  status           String   @db.VarChar
-  tags             String[]
-  votes            Int      @default(1)
+  id                 String   @id(map: "feature_request_pk") @db.Uuid
+  title              String   @db.VarChar
+  description        String
+  attachment_count   Int?
+  status             String   @db.VarChar
+  tags               String[]
+  votes              Int      @default(1)
+  submitted_by_email String   @db.VarChar
+  created_at         DateTime @db.Timestamp(6)
+  updated_at         DateTime @db.Timestamp(6)
+  company_id         String?  @db.VarChar
 }
 
 model feature_request_vote_to_user_id {
   id                 String @id(map: "feature_request_vote_to_user_id_pk") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   feature_request_id String @db.Uuid
-  user_id            String @db.Uuid
+  user_email         String @db.VarChar
 }
 
 model users {
