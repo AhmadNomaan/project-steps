@@ -18,8 +18,6 @@ export class CreateFeatureRequestDto{
     description: string
     @ApiProperty({type: String, isArray: true})
     tags: Array<string>
-    @ApiProperty()
-    submitted_by_email: string
 }
 
 export class GetFeatureQueryDto extends PageOptionsDto{
@@ -32,7 +30,10 @@ export class GetFeatureQueryDto extends PageOptionsDto{
 export class VoteFeatureRequestDto {
     @ApiProperty()
     featureRequestId: string
+}
 
-    @ApiProperty()
-    voted_by_user_id: string
+export class UpdateFeatureRequestDto {
+    @ApiProperty({enum: FeatureRequestStatusEnum, default: FeatureRequestStatusEnum.UNDERCONSIDERATION})
+    @IsEnum(FeatureRequestStatusEnum)
+    status: FeatureRequestStatusEnum
 }

@@ -20,4 +20,4 @@ export class UserEntity implements users {
     companies: string[];
 }
 
-export class UserReturnEntity extends OmitType(UserEntity, ['password']) {}
+export class UserReturnEntity extends OmitType(UserEntity, ['password', 'companies']) {}

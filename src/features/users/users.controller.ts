@@ -16,7 +16,7 @@ export class UsersController extends BaseAuthController{
   @Get()
   async getUsers(@Query() query: PageOptionsDto) {
     const user = this.contextService.userContext
-    return await this.usersService.getUsers(user.company_id, query)
+    return await this.usersService.getUsers(user, query)
   }
 
   @Get('me')
