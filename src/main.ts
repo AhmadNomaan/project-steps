@@ -37,6 +37,7 @@ async function bootstrap() {
     .setTitle('Project Steps')
     .setDescription('Documentation for Project Steps, a project management tool for startups.')
     .addBearerAuth()
+    .addTag('')
     .setVersion('1.0')
     .build()
 

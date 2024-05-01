@@ -7,6 +7,6 @@ export class AppController {
 
   @Get()
   getHello(): string {
-    return this.appService.getHello();
+    return `Head on over to http://localhost:5000/swagger for API documentation`;
   }
 }

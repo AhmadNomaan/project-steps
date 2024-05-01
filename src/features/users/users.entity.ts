@@ -1,10 +1,11 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty, OmitType } from "@nestjs/swagger";
 import { users } from "@prisma/client";
 
 export class UserEntity implements users {
-    name: string;
     @ApiProperty()
     id: string;
+    @ApiProperty()
+    name: string;
     @ApiProperty()
     email: string;
     @ApiProperty()
@@ -14,7 +15,9 @@ export class UserEntity implements users {
     @ApiProperty()
     updated_at: Date;
     @ApiProperty()
-    company_id: string;
+    owned_company_id: string;
     @ApiProperty()
-    is_admin: boolean;
+    companies: string[];
 }
+
+export class UserReturnEntity extends OmitType(UserEntity, ['password']) {}

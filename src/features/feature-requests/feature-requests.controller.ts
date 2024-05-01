@@ -4,16 +4,18 @@ import { ApiCreatedResponse, ApiExtraModels, ApiParam, ApiResponse, ApiTags, get
 import { CreateFeatureRequestDto, GetFeatureQueryDto, VoteFeatureRequestDto } from './feature-requests.dto';
 import { PageOptionsDto, SuccessEntity } from 'src/common/query-params';
 import { FeatureRequestEntity } from './feature-requests.entity';
+import { UserContextService } from 'src/common/context.service';
 
 @Controller('feature-requests')
 @ApiTags('Feature Requests')
 export class FeatureRequestsController {
-  constructor(private readonly featureRequestsService: FeatureRequestsService) { }
+  constructor(private readonly featureRequestsService: FeatureRequestsService, private readonly contextService: UserContextService) { }
 
   @Post(':company_id')
   @ApiCreatedResponse({type: SuccessEntity})
   async createFeatureRequest(@Param('company_id') company_id: string, @Body() dto: CreateFeatureRequestDto) {
-    return await this.featureRequestsService.createFeatureRequest(company_id, dto)
+    const user = this.contextService.userContext
+    return await this.featureRequestsService.createFeatureRequest(company_id, dto, user)
   }
 
   @Get(':company_id')
@@ -23,7 +25,8 @@ export class FeatureRequestsController {
 
   @Post(':/company_id/vote-feature-request')
   async voteFeatureRequest(@Param('company_id') company_id: string, @Body() dto: VoteFeatureRequestDto){
-    return await this.featureRequestsService.voteFeatureRequest(company_id, dto)
+    const user = this.contextService.userContext
+    return await this.featureRequestsService.voteFeatureRequest(company_id, dto, user)
   } 
 
 }

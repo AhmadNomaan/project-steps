@@ -18,7 +18,7 @@ export class FeatureRequestEntity implements feature_request{
     @ApiProperty()
     votes: number;
     @ApiProperty()
-    submitted_by_email: string;
+    submitted_by_id: string;
     @ApiProperty()
     created_at: Date;
     @ApiProperty()

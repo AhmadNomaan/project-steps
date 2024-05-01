@@ -34,5 +34,5 @@ export class VoteFeatureRequestDto {
     featureRequestId: string
 
     @ApiProperty()
-    voted_by_email: string
+    voted_by_user_id: string
 }

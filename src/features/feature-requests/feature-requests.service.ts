@@ -4,12 +4,13 @@ import { PageDto, PageMetaDto, PageOptionsDto } from 'src/common/query-params';
 import { Utilities } from 'src/common/utils';
 import { CreateFeatureRequestDto, FeatureRequestStatusEnum, GetFeatureQueryDto, VoteFeatureRequestDto } from './feature-requests.dto';
 import { FeatureRequestEntity } from './feature-requests.entity';
+import { User_Context } from 'src/common/context.service';
 
 @Injectable()
 export class FeatureRequestsService {
     constructor(private dbService: PrismaService) { }
 
-    async createFeatureRequest(company_id: string, dto: CreateFeatureRequestDto) {
+    async createFeatureRequest(company_id: string, dto: CreateFeatureRequestDto, user: User_Context) {
         try {
             const created = await this.dbService.$transaction(async () => {
                 const request: FeatureRequestEntity = await this.dbService.feature_request.create({
@@ -18,7 +19,7 @@ export class FeatureRequestsService {
                         title: dto.title,
                         description: dto.description,
                         tags: dto.tags,
-                        submitted_by_email: dto.submitted_by_email,
+                        submitted_by_id: user.id,
                         status: FeatureRequestStatusEnum.SUBMITTED,
                         created_at: Utilities.currentUTC(),
                         updated_at: Utilities.currentUTC(),
@@ -30,14 +31,13 @@ export class FeatureRequestsService {
                     data: {
                         id: Utilities.UUID(),
                         feature_request_id: request.id,
-                        user_email: dto.submitted_by_email
+                        user_id: user.id
                     }
                 })
 
                 return request
 
             })
-            return true
             return {
                 success: true,
                 message: 'Feature Request successfully submitted.'
@@ -86,25 +86,20 @@ export class FeatureRequestsService {
         })
     }
 
-    async getFeatureRequestVotes(featureRequestId: string, vote_by_email: string | null, pageOptionsDto: PageOptionsDto,) {
+    async getFeatureRequestVotes(featureRequestId: string, voted_by_user_id: string, pageOptionsDto: PageOptionsDto,) {
         const votes = await this.dbService.feature_request_vote_to_user_id.findMany({
             where: {
                 feature_request_id: featureRequestId,
-                user_email: vote_by_email ?? undefined
+                user_id: voted_by_user_id
             },
             take: pageOptionsDto.take,
             skip: pageOptionsDto.skip,
-            orderBy: [
-                {
-                    user_email: pageOptionsDto.order
-                }
-            ]
         })
 
         const total = await this.dbService.feature_request_vote_to_user_id.count({
             where: {
                 feature_request_id: featureRequestId,
-                user_email: vote_by_email
+                user_id: voted_by_user_id
             }
         })
 
@@ -114,10 +109,10 @@ export class FeatureRequestsService {
     }
 
 
-    async voteFeatureRequest(company_id: string, dto: VoteFeatureRequestDto) {
+    async voteFeatureRequest(company_id: string, dto: VoteFeatureRequestDto, user: User_Context) {
         const featureRequest = await this.getFeatureRequestById(dto.featureRequestId)
 
-        const voteExists = await this.getFeatureRequestVotes(featureRequest.id, dto.voted_by_email, new PageOptionsDto())
+        const voteExists = await this.getFeatureRequestVotes(featureRequest.id, dto.voted_by_user_id, new PageOptionsDto())
         if (voteExists.meta.total > 0) {
             return {
                 success: true,
@@ -132,7 +127,7 @@ export class FeatureRequestsService {
                     data: {
                         id: Utilities.UUID(),
                         feature_request_id: featureRequest.id,
-                        user_email: dto.voted_by_email
+                        user_id: user.id
                     }
                 })
 
